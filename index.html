@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vital</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #12182a;
+      --text: #e8ecf4;
+      --muted: #9aa6c4;
+      --accent: #4f7cff;
+      --danger: #ff3b30;
+      --ok: #30d158;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+      --gap: clamp(12px, 2.5vw, 20px);
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f8ff;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #3b82f6;
+        --danger: #dc2626;
+        --ok: #16a34a;
+        --shadow: 0 12px 24px rgba(2,6,23,.08);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 20% -10%, rgba(79,124,255,.16), transparent 65%),
+                  radial-gradient(1000px 700px at 120% 10%, rgba(48,209,88,.12), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+      padding: calc(env(safe-area-inset-top) + 16px) clamp(12px, 3.5vw, 28px) calc(env(safe-area-inset-bottom) + 16px);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--gap);
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: clamp(22px, 3.5vw, 28px);
+      letter-spacing: 0.4px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    .card {
+      width: min(900px, 100%);
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(14px, 3.5vw, 26px);
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: var(--gap);
+      flex-wrap: wrap;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 2px color-mix(in oklab, var(--ok), transparent 65%);
+      transition: background .25s ease;
+    }
+    .dot.offline { background: var(--danger); box-shadow: 0 0 0 2px color-mix(in oklab, var(--danger), transparent 65%);}    
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--gap);
+    }
+
+    .tile {
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: calc(var(--radius) - 6px);
+      padding: clamp(12px, 2.2vw, 18px);
+      box-shadow: 0 6px 14px rgba(0,0,0,.12);
+    }
+
+    .label {
+      font-size: 12px;
+      letter-spacing: .5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .value {
+      font-weight: 700;
+      font-size: clamp(18px, 4.6vw, 32px);
+      line-height: 1.2;
+    }
+    .unit { font-weight: 500; font-size: .8em; color: var(--muted); margin-left: 6px; }
+
+    .actions {
+      margin-top: var(--gap);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 560px) {
+      .actions { grid-template-columns: auto 1fr; }
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      font-size: 16px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(0,0,0,.15);
+      transition: transform .06s ease, filter .2s ease, opacity .2s ease;
+    }
+    button:active { transform: translateY(1px); }
+    .btn-reset { background: var(--danger); color: #fff; }
+    .btn-reset[disabled] { opacity: .6; cursor: not-allowed; }
+
+    .subtle { color: var(--muted); font-size: 13px; }
+
+    footer { width: min(900px, 100%); margin: var(--gap) auto 0; color: var(--muted); font-size: 12px; text-align: center; }
+
+    .fade-in { animation: fade .35s ease both; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { .fade-in { animation: none; } button { transition: none; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">hi Vivek!</div>
+  </header>
+
+  <main class="card fade-in" aria-live="polite">
+    <div class="meta">
+      <div class="status" id="connStatus">
+        <span class="dot" id="statusDot" aria-hidden="true"></span>
+        <span id="statusText">Live</span>
+      </div>
+      <div class="subtle" id="updatedAt">—</div>
+    </div>
+
+    <section class="grid" id="stats">
+      <div class="tile">
+        <div class="label">Speed</div>
+        <div class="value"><span id="speed">0</span><span class="unit">km/h</span></div>
+      </div>
+      <div class="tile">
+        <div class="label">Distance</div>
+        <div class="value"><span id="distance">0</span><span class="unit">km</span></div>
+      </div>
+      <div class="tile">
+        <div class="label">Duration</div>
+        <div class="value"><span id="duration">0</span><span class="unit">min</span></div>
+      </div>
+      <div class="tile">
+        <div class="label">Calories</div>
+        <div class="value"><span id="kcal">0</span><span class="unit">kcal</span></div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="reset" class="btn-reset" type="button">Reset</button>
+    </div>
+  </main>
+
+  <footer>
+    <span id="footnote">If numbers look off, check the bike circumference and sensor alignment.</span>
+  </footer>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+    const dot = el('statusDot');
+    const statusText = el('statusText');
+    const updatedAt = el('updatedAt');
+    const resetBtn = el('reset');
+
+    function setOnlineState(online) {
+      dot.classList.toggle('offline', !online);
+      statusText.textContent = online ? 'Live' : 'Offline';
+    }
+
+    function fmt(n, digits = 0) {
+      if (typeof n !== 'number' || Number.isNaN(n)) return '0';
+      return n.toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
+    }
+
+    async function fetchStats() {
+      try {
+        const res = await fetch('/api/v1/stats', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        const d = json.data || {};
+
+        el('speed').textContent = fmt(d.speedKilometresPerHour ?? 0, 2);
+        el('distance').textContent = fmt(d.distanceKilometres ?? 0, 3);
+        el('duration').textContent = fmt(d.movingMinutes ?? 0, 2);
+        el('kcal').textContent = fmt(d.kiloCalories ?? 0, 1);
+
+        setOnlineState(true);
+        updatedAt.textContent = new Date().toLocaleTimeString();
+      } catch (e) {
+        console.error('stats fetch failed', e);
+        setOnlineState(false);
+      }
+    }
+
+    async function resetStats() {
+      try {
+        resetBtn.disabled = true;
+        const res = await fetch('/api/v1/reset', { method: 'POST' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        await fetchStats();
+      } catch (e) {
+        console.error('reset failed', e);
+      } finally {
+        resetBtn.disabled = false;
+      }
+    }
+
+    resetBtn.addEventListener('click', resetStats);
+
+    // Kick off + poll
+    fetchStats();
+    const POLL_MS = 500;
+    const timer = setInterval(fetchStats, POLL_MS);
+
+    // Clean up if this page ever gets unloaded (helps in webviews)
+    window.addEventListener('pagehide', () => clearInterval(timer));
+  </script>
+</body>
+</html>
